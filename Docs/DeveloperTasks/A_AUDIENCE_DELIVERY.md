@@ -84,3 +84,16 @@ swiftc -module-cache-path .build/ModuleCache -o .build/audience-checks \
 - Figma MCP无编辑权限；用户授权后Chrome已定位总览节点并核对基本结构/尺寸，随后Computer Use工具拒绝当前URL并终止浏览器会话，二级画板及逐像素对照未完成。
 - 安装iOS运行时后须补充表单取消、返回、四Tab切换、窄屏和大字体实际验收；真机和iOS17运行时也未验证。
 - 代码通过独立提交交团队PR review；不自动合并main或他人分支。
+
+## Git 交付状态
+
+共享基础提交 `26118f2`；人群模块提交 `57d7f58`。均保存在本地 feature/audience，工作区随后仅补充交付说明。尝试 `git push -u origin feature/audience` 返回 GitHub 403：现有认证账号 yguodong627-star 对 iceflying6397/demo 无写权限。因此没有远端分支或PR，也未合并main；不以Fork或另建仓库绕过团队要求。
+
+交付附完整源码zip和Git bundle。具备权限的维护者可在原仓库执行：
+
+```sh
+git fetch /absolute/path/A-audience.bundle feature/audience:feature/audience
+# 检查分支与以上构建/验证结果后，使用自己的仓库权限推送并发起团队PR。
+```
+
+实际执行应将路径替换为下载的 bundle 绝对路径。若本地已有同名开发分支，先检查差异，勿强制覆盖。构建产物、个人配置和凭据不在源码包内。
