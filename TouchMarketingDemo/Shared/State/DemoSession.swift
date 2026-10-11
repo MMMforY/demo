@@ -23,12 +23,15 @@ final class DemoSession {
     var store: MockDataStore { .init(audiences: audiences, plans: plans, approvalTasks: approvalTasks, analytics: analytics) }
     /// The existing read-only approval UI must display the referenced profile, never current V2 as V1.
     var approvalStore: MockDataStore {
-        let frozen = audiences.map { current in
-            guard let task = approvalTasks.first(where: { $0.audienceID == current.id }),
-                  let snapshot = audienceVersion(id: current.id, version: task.audienceVersion) else { return current }
-            return snapshot.audience
+        let frozen: [Audience] = audiences.compactMap { current in
+            guard let task = approvalTasks.first(where: { $0.audienceID == current.id }) else { return current }
+            return audienceVersion(id: current.id, version: task.audienceVersion)?.audience
         }
-        return .init(audiences: frozen, plans: plans, approvalTasks: approvalTasks, analytics: analytics)
+        let frozenPlans: [MarketingPlan] = plans.compactMap { current in
+            guard let group = approvalTasks.flatMap({ $0.allocation.groups }).first(where: { $0.planID == current.id }) else { return current }
+            return planVersion(id: current.id, version: group.planVersion)
+        }
+        return .init(audiences: frozen, plans: frozenPlans, approvalTasks: approvalTasks, analytics: analytics)
     }
     func audience(id: String) -> AudienceSnapshot? { audienceSnapshots.first { $0.audience.id == id } }
     func audienceVersion(id: String, version: Int) -> AudienceSnapshot? {
@@ -108,6 +111,11 @@ final class DemoSession {
         if let existing, existing.audience.version != baseVersion { throw DemoValidationError(message: "人群版本已变化，请重新打开编辑。") }
         var clean = rules
         clean.instruction = rules.instruction.trimmingCharacters(in: .whitespacesAndNewlines)
+        clean.conditions = clean.conditions.map { condition in
+            guard case .date(let date) = condition.value else { return condition }
+            return AudienceRuleCondition(id: condition.id, field: condition.field, operation: condition.operation,
+                                         value: .date(DemoClock.calendar.startOfDay(for: date)))
+        }
         try validate(clean, existing: existing?.rules)
         if let existing, existing.rules == clean { return existing }
         let number = existing?.audience.number ?? nextAudienceNumber
