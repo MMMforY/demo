@@ -87,7 +87,7 @@ swiftc -module-cache-path .build/ModuleCache -o .build/audience-checks \
 
 ## Git 交付状态
 
-共享基础提交 `26118f2`；人群模块提交 `57d7f58`。均保存在本地 feature/audience，工作区随后仅补充交付说明。尝试 `git push -u origin feature/audience` 返回 GitHub 403：现有认证账号 yguodong627-star 对 iceflying6397/demo 无写权限。因此没有远端分支或PR，也未合并main；不以Fork或另建仓库绕过团队要求。
+共享基础提交 `26118f2`；人群模块提交 `57d7f58`。均保存在 feature/audience。首次 `git push -u origin feature/audience` 返回 GitHub 403：现有认证账号 yguodong627-star 对 iceflying6397/demo 无写权限。随后用户明确要求给原仓库提交 PR，因此改用 yguodong627-star/demo Fork 作为分支上传来源，PR 目标仍为 iceflying6397/demo 的 main；不直接修改或合并原仓库 main。
 
 交付附完整源码zip和Git bundle。具备权限的维护者可在原仓库执行：
 
